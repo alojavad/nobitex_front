@@ -135,4 +135,10 @@ export const api = {
     const response = await axios.post(`${API_BASE_URL}/api/auth/register`, userData);
     return { user: response.data };
   },
+
+  // اضافه کردن تابع برای دریافت قیمت‌های آنلاین
+  getOnlinePrices: async (): Promise<{ prices: any[] }> => {
+    const response = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd');
+    return { prices: response.data };
+  },
 };
