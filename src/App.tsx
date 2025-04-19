@@ -4,6 +4,9 @@ import { Orders } from './pages/Orders';
 import { Trades } from './pages/Trades';
 import { MarketStats } from './pages/MarketStats';
 import { OrderBookPage } from './pages/OrderBook';
+import { Signup } from './pages/Signup';
+import { Login } from './pages/Login';
+import { Home } from './pages/Home';
 
 function App() {
   return (
@@ -35,7 +38,9 @@ function App() {
           <Route path="/trades" element={<Trades />} />
           <Route path="/market-stats" element={<MarketStats />} />
           <Route path="/order-book" element={<OrderBookPage />} />
-          <Route path="/" element={<Orders />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Home />} />
         </Routes>
       </Container>
     </Router>
