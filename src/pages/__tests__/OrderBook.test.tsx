@@ -1,9 +1,11 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { OrderBookPage } from '../OrderBook';
 import { api } from '../../services/api';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 
 // Mock the API module
-jest.mock('../../services/api');
+vi.mock('../../services/api');
 
 describe('OrderBookPage', () => {
   const mockOrderBook = {
@@ -23,7 +25,7 @@ describe('OrderBookPage', () => {
 
   beforeEach(() => {
     // Reset all mocks before each test
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders order book page with initial state', () => {
@@ -39,7 +41,7 @@ describe('OrderBookPage', () => {
 
   it('fetches and displays order book data', async () => {
     // Mock the API response
-    (api.getOrderBook as jest.Mock).mockResolvedValueOnce({ orderBook: mockOrderBook });
+    (api.getOrderBook as any).mockResolvedValueOnce({ orderBook: mockOrderBook });
 
     render(<OrderBookPage />);
 
@@ -60,7 +62,7 @@ describe('OrderBookPage', () => {
 
   it('handles API error gracefully', async () => {
     // Mock the API to throw an error
-    (api.getOrderBook as jest.Mock).mockRejectedValueOnce(new Error('API Error'));
+    (api.getOrderBook as any).mockRejectedValueOnce(new Error('API Error'));
 
     render(<OrderBookPage />);
 
@@ -72,7 +74,7 @@ describe('OrderBookPage', () => {
 
   it('updates order book when symbol changes', async () => {
     // Mock the API response
-    (api.getOrderBook as jest.Mock).mockResolvedValueOnce({ orderBook: mockOrderBook });
+    (api.getOrderBook as any).mockResolvedValueOnce({ orderBook: mockOrderBook });
 
     render(<OrderBookPage />);
 

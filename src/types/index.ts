@@ -81,13 +81,13 @@ export interface UDFHistoryData {
 }
 
 export interface UDFHistory {
-  symbol: string;
-  resolution: string;
-  from: Date;
-  to: Date;
-  data: UDFHistoryData[];
-  createdAt: Date;
-  updatedAt: Date;
+  s: 'ok' | 'error' | 'no_data';
+  t: number[];  // timestamps
+  c: number[];  // close prices
+  o: number[];  // open prices
+  h: number[];  // high prices
+  l: number[];  // low prices
+  v: number[];  // volumes
 }
 
 export interface User {
