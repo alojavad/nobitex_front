@@ -63,42 +63,27 @@ export const api = {
   },
 
   // Market Stats
-  getMarketStats: async (symbol?: string): Promise<{ stats: MarketStat[] }> => {
-    const response = await axios.get(`${API_BASE_URL}/api/market-stats${symbol ? `?symbol=${symbol}` : ''}`);
-    return { stats: response.data };
+  getMarketStats: async (srcCurrency = 'btc', dstCurrency = 'rls'): Promise<{ stats: MarketStat[] }> => {
+    const response = await axios.get(`${API_BASE_URL}/api/market-stats`, {
+      params: { srcCurrency, dstCurrency }
+    });
+    return { stats: response.data.stats ? Object.values(response.data.stats) : [] };
   },
 
   // Orders
   getOrders: async (symbol?: string): Promise<{ orders: Order[] }> => {
-    // استفاده از داده‌های ساختگی به جای درخواست به سرور
-    return {
-      orders: symbol
-        ? mockOrders.filter((order) => order.symbol === symbol)
-        : mockOrders,
-    };
+    const response = await axios.get(`${API_BASE_URL}/api/orders${symbol ? `?symbol=${symbol}` : ''}`);
+    return { orders: response.data };
   },
 
   createOrder: async (order: Omit<Order, 'id' | 'createdAt' | 'updatedAt' | 'status'>): Promise<{ order: Order }> => {
-    // ایجاد سفارش ساختگی
-    const newOrder: Order = {
-      ...order,
-      id: Math.random().toString(36).substring(7),
-      status: 'active',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    mockOrders.push(newOrder);
-    return { order: newOrder };
+    const response = await axios.post(`${API_BASE_URL}/api/orders`, order);
+    return { order: response.data };
   },
 
   cancelOrder: async (orderId: string): Promise<{ success: boolean }> => {
-    // حذف سفارش از لیست سفارشات ساختگی
-    const orderIndex = mockOrders.findIndex((order) => order.id === orderId);
-    if (orderIndex !== -1) {
-      mockOrders[orderIndex].status = 'canceled';
-      return { success: true };
-    }
-    return { success: false };
+    const response = await axios.delete(`${API_BASE_URL}/api/orders/${orderId}`);
+    return { success: response.data.success };
   },
 
   // Order Book
@@ -109,12 +94,8 @@ export const api = {
 
   // Trades
   getTrades: async (symbol?: string): Promise<{ trades: Trade[] }> => {
-    // استفاده از داده‌های ساختگی به جای درخواست به سرور
-    return {
-      trades: symbol
-        ? mockTrades.filter((trade) => trade.symbol === symbol)
-        : mockTrades,
-    };
+    const response = await axios.get(`${API_BASE_URL}/api/trades${symbol ? `?symbol=${symbol}` : ''}`);
+    return { trades: response.data.trades || [] };
   },
 
   // UDF History
@@ -134,6 +115,12 @@ export const api = {
   register: async (userData: { username: string, email: string, password: string }): Promise<{ user: User }> => {
     const response = await axios.post(`${API_BASE_URL}/api/auth/register`, userData);
     return { user: response.data };
+  },
+
+  // دریافت آمار بازار جهانی
+  getGlobalStats: async (): Promise<any> => {
+    const response = await axios.get(`${API_BASE_URL}/api/market/global-stats`);
+    return response.data;
   },
 
   // اضافه کردن تابع برای دریافت قیمت‌های آنلاین
