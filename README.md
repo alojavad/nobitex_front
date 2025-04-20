@@ -1,3 +1,74 @@
+# نوبیتکس فرانت‌اند
+
+این پروژه یک رابط کاربری برای پلتفرم معاملات ارز دیجیتال نوبیتکس است.
+
+## ویژگی‌ها
+
+- نمایش دفتر سفارشات
+- نمایش معاملات
+- نمایش آمار بازار
+- مدیریت سفارشات
+- احراز هویت کاربران
+
+## تکنولوژی‌ها
+
+- React
+- TypeScript
+- Material-UI
+- Vite
+- Jest
+- React Testing Library
+
+## نصب و راه‌اندازی
+
+1. نصب وابستگی‌ها:
+```bash
+npm install
+```
+
+2. اجرای پروژه در محیط توسعه:
+```bash
+npm run dev
+```
+
+3. ساخت نسخه production:
+```bash
+npm run build
+```
+
+4. اجرای تست‌ها:
+```bash
+npm test
+```
+
+## ساختار پروژه
+
+```
+src/
+  ├── components/     # کامپوننت‌های قابل استفاده مجدد
+  ├── pages/         # صفحات اصلی برنامه
+  ├── services/      # سرویس‌های API
+  ├── types/         # تعاریف TypeScript
+  ├── utils/         # توابع کمکی
+  └── App.tsx        # کامپوننت اصلی
+```
+
+## تست‌ها
+
+پروژه از Jest و React Testing Library برای تست‌ها استفاده می‌کند. تست‌ها در پوشه `__tests__` قرار دارند.
+
+## مشارکت
+
+1. Fork پروژه
+2. ایجاد branch جدید (`git checkout -b feature/amazing-feature`)
+3. Commit تغییرات (`git commit -m 'feat: add amazing feature'`)
+4. Push به branch (`git push origin feature/amazing-feature`)
+5. ایجاد Pull Request
+
+## لایسنس
+
+این پروژه تحت لایسنس MIT منتشر شده است.
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
@@ -52,4 +123,3 @@ export default tseslint.config({
   },
 })
 ```
-# nobitex_front
