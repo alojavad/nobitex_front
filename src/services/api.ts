@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { Market, MarketStat, Order, OrderBook, Trade, UDFHistory, User } from '../types';
-import { mockMarkets, mockMarketStats, mockOrderBook, mockTrades } from '../mocks/data';
 
 const API_BASE_URL = 'https://nobitex-back.onrender.com';
 
@@ -33,114 +32,102 @@ apiClient.interceptors.response.use(
   }
 );
 
+// اضافه کردن interceptor برای اضافه کردن توکن به درخواست‌ها
+apiClient.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 export const api = {
   // Markets
   getMarkets: async (): Promise<{ markets: Market[] }> => {
-    // استفاده از داده‌های موک
-    return { markets: mockMarkets };
+    const response = await apiClient.get('/api/markets');
+    return response.data;
   },
 
   // Market Stats
   getMarketStats: async (srcCurrency = 'btc', dstCurrency = 'rls'): Promise<{ stats: MarketStat[] }> => {
-    // استفاده از داده‌های موک
-    return { stats: mockMarketStats };
+    const response = await apiClient.get('/api/market-stats', {
+      params: { srcCurrency, dstCurrency }
+    });
+    return response.data;
   },
 
   // Orders
   getOrders: async (symbol?: string): Promise<{ orders: Order[] }> => {
-    // فعلاً لیست خالی برمی‌گرداند
-    return { orders: [] };
+    const response = await apiClient.get('/api/orders', {
+      params: { symbol }
+    });
+    return response.data;
   },
 
   createOrder: async (order: Omit<Order, 'id' | 'createdAt' | 'updatedAt' | 'status'>): Promise<{ order: Order }> => {
-    // شبیه‌سازی ایجاد سفارش
-    const newOrder: Order = {
-      ...order,
-      id: Math.random().toString(36).substring(7),
-      status: 'active',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    return { order: newOrder };
+    const response = await apiClient.post('/api/orders', order);
+    return response.data;
   },
 
   cancelOrder: async (orderId: string): Promise<{ success: boolean }> => {
-    // شبیه‌سازی لغو سفارش
-    return { success: true };
+    const response = await apiClient.delete(`/api/orders/${orderId}`);
+    return response.data;
   },
 
   // Order Book
   getOrderBook: async (symbol: string): Promise<{ orderBook: OrderBook }> => {
-    // استفاده از داده‌های موک
-    return { orderBook: { ...mockOrderBook, symbol } };
+    const response = await apiClient.get(`/api/order-book/${symbol}`);
+    return response.data;
   },
 
   // Trades
   getTrades: async (symbol?: string): Promise<{ trades: Trade[] }> => {
-    // استفاده از داده‌های موک
-    if (symbol) {
-      return { trades: mockTrades.filter(trade => trade.symbol === symbol) };
-    }
-    return { trades: mockTrades };
+    const response = await apiClient.get('/api/trades', {
+      params: { symbol }
+    });
+    return response.data;
   },
 
   // UDF History
   getUDFHistory: async (symbol: string, resolution: string, from: Date, to: Date): Promise<{ history: UDFHistory }> => {
-    // شبیه‌سازی داده‌های تاریخی
-    return {
-      history: {
-        s: 'ok',
-        t: [Math.floor(from.getTime() / 1000)],
-        c: [mockMarketStats.find(stat => stat.symbol === symbol)?.latest || 0],
-        o: [mockMarketStats.find(stat => stat.symbol === symbol)?.dayOpen || 0],
-        h: [mockMarketStats.find(stat => stat.symbol === symbol)?.dayHigh || 0],
-        l: [mockMarketStats.find(stat => stat.symbol === symbol)?.dayLow || 0],
-        v: [mockMarketStats.find(stat => stat.symbol === symbol)?.volumeSrc || 0],
+    const response = await apiClient.get('/api/udf/history', {
+      params: {
+        symbol,
+        resolution,
+        from: Math.floor(from.getTime() / 1000),
+        to: Math.floor(to.getTime() / 1000)
       }
-    };
+    });
+    return response.data;
   },
 
   // User
   login: async (username: string, password: string): Promise<{ user: User; token: string }> => {
-    // شبیه‌سازی ورود کاربر
-    return {
-      user: {
-        username,
-        email: `${username}@example.com`,
-      },
-      token: 'mock-token'
-    };
+    const response = await apiClient.post('/api/auth/login', { username, password });
+    const { user, token } = response.data;
+    localStorage.setItem('token', token);
+    return { user, token };
   },
 
   register: async (userData: { username: string, email: string, password: string }): Promise<{ user: User }> => {
-    // شبیه‌سازی ثبت‌نام کاربر
-    return {
-      user: {
-        username: userData.username,
-        email: userData.email,
-      }
-    };
+    const response = await apiClient.post('/api/auth/register', userData);
+    return response.data;
   },
 
   // دریافت آمار بازار جهانی
   getGlobalStats: async (): Promise<any> => {
-    // شبیه‌سازی آمار جهانی
-    return {
-      btcPrice: 65000,
-      ethPrice: 3200,
-      marketCap: 2800000000000,
-      btcDominance: 45.2,
-    };
+    const response = await apiClient.get('/api/global-stats');
+    return response.data;
   },
 
   // اضافه کردن تابع برای دریافت قیمت‌های آنلاین
   getOnlinePrices: async (): Promise<{ prices: any[] }> => {
-    // شبیه‌سازی قیمت‌های آنلاین
-    return {
-      prices: [
-        { symbol: 'BTC', price: 65000 },
-        { symbol: 'ETH', price: 3200 }
-      ]
-    };
+    const response = await apiClient.get('/api/prices');
+    return response.data;
   },
 };
